@@ -1,0 +1,6 @@
+.column{
+    background: var(--COLOR-GRAY-DARK);
+    min-height: 20rem;
+    color: #fff;
+    padding: 4px;
+}

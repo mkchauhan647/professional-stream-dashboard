@@ -1,0 +1,20 @@
+/* Import all of Tailwind's styles: preflight, components, and utilities */
+@import "tailwindcss";
+
+/* body {
+  @apply bg-gradient-to-br from-darker to-dark text-light min-h-screen overflow-x-hidden;
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text;
+  }
+} */
+
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}

@@ -1,0 +1,5 @@
+[
+  { "id": 1, "title": "task 1111", "state": "DONE" },
+  { "id": 2, "title": "task 2", "state": "IN_PROGRESS" },
+  { "id": 3, "title": "task 3", "state": "DONE" }
+]
