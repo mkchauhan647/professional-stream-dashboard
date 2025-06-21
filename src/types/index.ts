@@ -41,10 +41,22 @@ export interface ServerStatusMessage {
     };
   };
 }
+
+
+export interface ServerStatus {
+  message: string;
+  active: boolean;
+  platforms: {
+    [key: string]: PlatformStatus;
+  };
+}
+
+
+
 // import type { LucideIcon } from 'lucide-react';
 // // Re-exporting server types for client use. Assumes server is a sibling directory.
 // export type { Quality, PlatformStatus, ServerStatus, ServerToClientEvents, ClientToServerEvents } from '../../server/types';
-export type {  ServerStatus } from '../../server/types';
+
 
 // export type PlatformName = "youtube" | "facebook";
 // export type AudioSource = 'mic' | 'system' | 'both' | 'none';
