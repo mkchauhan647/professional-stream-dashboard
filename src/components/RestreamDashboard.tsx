@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
-import type { ServerToClientEvents, ClientToServerEvents, RestreamState, RestreamDestination } from '../../server/types' // Adjust path
+import type { ServerToClientEvents, ClientToServerEvents, RestreamState, RestreamDestination } from '../types/restream.types';
 import VideoPlayer from './VideoPlayer';
 import { v4 as uuidv4 } from 'uuid';
 import { Clipboard, Play, Power, Plus, Trash2, Video, VideoOff } from 'lucide-react';
