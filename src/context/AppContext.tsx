@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, type ReactNode } from 'react';
-import type { Quality, AudioSource, ServerStatus } from '../types';
+import type { Quality, AudioSource } from '../types';
+import type { ServerStatus } from '../types';
 
 interface AppState {
   isConnected: boolean;

@@ -3,7 +3,7 @@ import { io, Socket } from 'socket.io-client';
 import type { ServerToClientEvents, ClientToServerEvents, RestreamState, RestreamDestination } from '../../server/types' // Adjust path
 import VideoPlayer from './VideoPlayer';
 import { v4 as uuidv4 } from 'uuid';
-import { Clipboard, Play, Power, Plus, Trash2, RotateCw, Video, VideoOff } from 'lucide-react';
+import { Clipboard, Play, Power, Plus, Trash2, Video, VideoOff } from 'lucide-react';
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:3000";
 const RTMP_URL = import.meta.env.VITE_RTMP_URL || "rtmp://localhost:1935/live";

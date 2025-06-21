@@ -1,6 +1,11 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export default function Card({ title, icon, children, className = '' }) {
+export default function Card({ title, icon, children, className = '' }: {
+  title: string;
+  icon?: any;
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <div className={`
       bg-dark/60 rounded-2xl p-6 shadow-2xl transition-transform duration-300 ease-in-out
