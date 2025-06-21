@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { BrowserRouter,Routes, Route } from 'react-router-dom';
 import { StreamProvider } from './context/StreamContext';
 import { ToastContainer } from 'react-toastify';
 import { HomePage } from './pages/HomePage';
@@ -11,12 +11,14 @@ function App() {
   return (
     <StreamProvider>
         <div className="min-h-screen bg-gray-900 text-white">
-          <Nav />
+        <Nav />
+        <BrowserRouter>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/restream" element={<RestreamPage />} />
           </Routes>
-        </div>
+        </BrowserRouter>
+      </div>
       <ToastContainer
         theme="dark"
         position="bottom-center"
