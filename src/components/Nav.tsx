@@ -18,6 +18,9 @@ export function Nav() {
         <Link to="/restream" className={linkClasses('/restream')}>
           Restream
         </Link>
+        <Link to="/messaging" className={linkClasses('/messaging')}>
+          Messaging
+        </Link>
       </div>
     </nav>
   );

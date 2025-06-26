@@ -13,6 +13,12 @@ export const useAudioMixer = () => {
     // Refs to hold the audio sources
     const micSourceNodeRef = useRef<MediaStreamAudioSourceNode | null>(null);
     const systemSourceNodeRef = useRef<MediaStreamAudioSourceNode | null>(null);
+
+    // // / --- Add these new refs for audio buffering ---
+    // const audioBuffer = useRef<AudioBuffer | null>(null);
+    // const audioQueue = useRef<AudioBuffer[]>([]);
+    // const isProcessing = useRef(false);
+    // const scriptProcessorRef = useRef<ScriptProcessorNode | null>(null);
     
     // Track current source type
     const currentSourceTypeRef = useRef<AudioSourceType>('none');
@@ -23,11 +29,78 @@ export const useAudioMixer = () => {
             const context = new (window.AudioContext || (window as any).webkitAudioContext)();
             audioContextRef.current = context;
             destinationNodeRef.current = context.createMediaStreamDestination();
+
+            // // --- Initialize audio processor ---
+            // scriptProcessorRef.current = context.createScriptProcessor(4096, 2, 2);
+            // scriptProcessorRef.current.onaudioprocess = (event) => {
+            //     if (!isProcessing.current && audioQueue.current.length > 0) {
+            //         processAudio();
+            //     }
+            // };
+            // scriptProcessorRef.current.connect(destinationNodeRef.current);
+
         } catch (e) {
             toast.error("Web Audio API is not supported by this browser.");
             console.error("Failed to initialize AudioContext", e);
         }
     }, []);
+
+
+    // // --- Add this new function for audio processing ---
+    // const processAudio = useCallback(() => {
+    //     const context = audioContextRef.current;
+    //     if (!context || !destinationNodeRef.current) return;
+        
+    //     isProcessing.current = true;
+        
+    //     const processNext = () => {
+    //         if (audioQueue.current.length === 0) {
+    //             isProcessing.current = false;
+    //             return;
+    //         }
+            
+    //         const buffer = audioQueue.current.shift()!;
+    //         const source = context.createBufferSource();
+    //         source.buffer = buffer;
+    //         source.connect(destinationNodeRef.current!);
+    //         source.start();
+    //         source.onended = processNext;
+    //     };
+        
+    //     processNext();
+    // }, []);
+
+    // will be impplemented Later....
+    //  // --- Modify your source connection to use the buffer ---
+    // const connectSourceToBuffer = (source: MediaStreamAudioSourceNode) => {
+    //     if (!audioContextRef.current || !scriptProcessorRef.current) return;
+        
+    //     source.connect(scriptProcessorRef.current);
+        
+    //     // Setup processor to fill the buffer
+    //     const processor = audioContextRef.current.createScriptProcessor(2048, 2, 2);
+    //     processor.onaudioprocess = (event) => {
+    //         const inputBuffer = event.inputBuffer;
+    //         const outputBuffer = event.outputBuffer;
+            
+    //         // Create AudioBuffer for our queue
+    //         const newBuffer = audioContextRef.current!.createBuffer(
+    //             outputBuffer.numberOfChannels,
+    //             outputBuffer.length,
+    //             outputBuffer.sampleRate
+    //         );
+            
+    //         for (let channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
+    //             newBuffer.copyToChannel(inputBuffer.getChannelData(channel), channel);
+    //         }
+            
+    //         audioQueue.current.push(newBuffer);
+    //     };
+        
+    //     source.connect(processor);
+    //     processor.connect(audioContextRef.current.destination);
+    // };
+
 
     const addMicSource = useCallback((micStream: MediaStream) => {
         const context = audioContextRef.current;
@@ -41,6 +114,7 @@ export const useAudioMixer = () => {
 
         try {
             const micSource = context.createMediaStreamSource(micStream);
+            // connectSourceToBuffer(micSource);
             const micGain = context.createGain();
             
             // Set initial gain based on current source type
@@ -69,6 +143,7 @@ export const useAudioMixer = () => {
 
         try {
             const systemSource = context.createMediaStreamSource(systemStream);
+            // connectSourceToBuffer(systemSource);
             const systemGain = context.createGain();
             
             // Set initial gain based on current source type
@@ -94,30 +169,38 @@ export const useAudioMixer = () => {
             context.resume().catch(console.error);
         }
 
+         // Add fade-in/out to prevent clicks
+        const FADE_DURATION = 0.02; // 20ms fade
         const now = context.currentTime;
         currentSourceTypeRef.current = sourceType;
+
+        //  // Add buffer flush on source change
+        // audioQueue.current = [];
+        // isProcessing.current = false;
+
+
 
         // Update gains based on new source type
         switch (sourceType) {
             case 'mic':
-                micGainNodeRef.current?.gain.setValueAtTime(1, now);
-                systemGainNodeRef.current?.gain.setValueAtTime(0, now);
+                systemGainNodeRef.current?.gain.setValueAtTime(0, now + FADE_DURATION);
+                micGainNodeRef.current?.gain.setValueAtTime(1, now + FADE_DURATION);
                 break;
             case 'system':
-                micGainNodeRef.current?.gain.setValueAtTime(0, now);
+                micGainNodeRef.current?.gain.setValueAtTime(0, now + FADE_DURATION);
                 if (systemGainNodeRef.current) {
-                    systemGainNodeRef.current.gain.setValueAtTime(1, now);
+                    systemGainNodeRef.current.gain.setValueAtTime(1, now + FADE_DURATION);
                 } else {
                     toast.warn("System audio source is not available");
                 }
                 break;
             case 'both':
-                micGainNodeRef.current?.gain.setValueAtTime(1, now);
-                systemGainNodeRef.current?.gain.setValueAtTime(1, now);
+                micGainNodeRef.current?.gain.setValueAtTime(1, now + FADE_DURATION);
+                systemGainNodeRef.current?.gain.setValueAtTime(1, now + FADE_DURATION);
                 break;
             case 'none':
-                micGainNodeRef.current?.gain.setValueAtTime(0, now);
-                systemGainNodeRef.current?.gain.setValueAtTime(0, now);
+                micGainNodeRef.current?.gain.setValueAtTime(0, now + FADE_DURATION);
+                systemGainNodeRef.current?.gain.setValueAtTime(0, now + FADE_DURATION);
                 break;
         }
     }, []);

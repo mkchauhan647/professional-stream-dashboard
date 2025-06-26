@@ -133,9 +133,9 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     try {
         const videoConstraints = { width: 1280, height: 720, frameRate: 30 };
         const audioConstraints: MediaTrackConstraints = {
-            sampleRate: 44100,
-            echoCancellation: true,
-            noiseSuppression: true,
+            sampleRate: 48000,
+            echoCancellation: false,
+            noiseSuppression: false,
         };
 
         audioMixer.initialize();
@@ -192,10 +192,25 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({ children }) 
             quality: quality as any,
         });
 
-        mediaRecorderRef.current = new MediaRecorder(finalStream, { 
-            mimeType: 'video/webm; codecs=vp8,opus',
-            audioBitsPerSecond: 128000
-        });
+        // mediaRecorderRef.current = new MediaRecorder(finalStream, {
+        //     mimeType: 'video/webm; codecs=vp8,opus',
+        //     audioBitsPerSecond: 128000
+      // });
+      
+      const options = {
+        mimeType: 'video/webm;codecs=h264,opus',
+        videoBitsPerSecond: 2500000,
+        audioBitsPerSecond: 128000
+      };
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        // addToast("Using VP8 codec as fallback", "warning");
+        options.mimeType = 'video/webm;codecs=vp8,opus';
+      }
+
+        mediaRecorderRef.current = new MediaRecorder(finalStream, options);
+      
+      
+
         mediaRecorderRef.current.ondataavailable = (event) => {
             if (event.data.size > 0 && socket.connected) {
                 socket.emit('stream-data', event.data);

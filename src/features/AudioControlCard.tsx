@@ -2,6 +2,7 @@ import React from 'react';
 import { useStream } from '../context/StreamContext';
 import { Card } from '../components/StreamingDashboard/Card';
 import { type AudioSourceType } from '../hooks/useAudioMixer';
+import { toast } from 'react-toastify';
 
 const audioOptions: { id: AudioSourceType; label: string; icon: string; description: string }[] = [
   { id: 'mic', label: 'Microphone Only', icon: 'fa-microphone-alt', description: 'Captures your voice only' },
@@ -26,7 +27,16 @@ export const AudioControlCard: React.FC = () => {
           return (
             <button
               key={opt.id}
-              onClick={() => setAudioSource(opt.id)}
+              // onClick={() => setAudioSource(opt.id)}
+              onClick={() => {
+                  if (isStreaming) {
+                    toast.warning("Audio switching may cause brief glitches");
+                    // Consider adding 500ms delay before actual switch
+                    setTimeout(() => setAudioSource(opt.id), 500);
+                  } else {
+                    setAudioSource(opt.id);
+                  }
+                }}
               disabled={isDisabled}
               aria-label={opt.label}
               className={`

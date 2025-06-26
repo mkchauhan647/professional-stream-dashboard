@@ -19,6 +19,7 @@ export const PreviewCard: React.FC = () => {
         ref={videoRef}
         autoPlay
         muted
+        controls
         playsInline
         className="w-full bg-black rounded-lg aspect-video mb-5 shadow-lg shadow-black/50"
       ></video>

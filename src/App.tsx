@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import { HomePage } from './pages/HomePage';
 import { RestreamPage } from './pages/RestreamPage';
 import { Nav } from './components/Nav';
+import Messaging from './pages/Messaging';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -14,7 +15,8 @@ function App() {
           <Nav />
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/restream" element={<RestreamPage />} />
+          <Route path="/restream" element={<RestreamPage />} />
+          <Route path="/messaging" element={<Messaging />} />
           </Routes>
         </div>
       <ToastContainer

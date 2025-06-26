@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab Capture Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        video {
+            width: 100%;
+            background: #000;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Browser Tab Capture</h1>
+        <button id="captureBtn">Capture Browser Tab</button>
+        <div id="status" class="status"></div>
+        <video id="preview" autoplay playsinline muted controls></video>
+    </div>
+
+    <script>
+        const captureBtn = document.getElementById('captureBtn');
+        const preview = document.getElementById('preview');
+        const statusDiv = document.getElementById('status');
+        let mediaStream = null;
+
+        captureBtn.addEventListener('click', async () => {
+            try {
+                // Request screen capture
+                // mediaStream = await navigator.mediaDevices.getDisplayMedia({
+                //     video: {
+                //         cursor: "always",
+                //         displaySurface: "browser"
+                //     },
+                //     audio: true
+                // });
+
+                mediaStream = await navigator.mediaDevices.getDisplayMedia({
+    video: {
+        cursor: "always",
+        displaySurface: "browser"
+    },
+    audio: {
+        echoCancellation: false,
+        noiseSuppression: false,
+        sampleRate: 44100
+    }
+});
+
+                
+                // Display stream in video element
+                preview.srcObject = mediaStream;
+                
+                // Update UI
+                captureBtn.textContent = 'Stop Capture';
+                statusDiv.textContent = 'Tab captured successfully!';
+                statusDiv.className = 'status success';
+                
+                // Handle when user stops sharing
+                mediaStream.getVideoTracks()[0].onended = () => {
+                    stopCapture();
+                    statusDiv.textContent = 'Capture ended by user';
+                    statusDiv.className = 'status';
+                };
+                
+                // Change button to stop capture
+                captureBtn.onclick = stopCapture;
+            } catch (err) {
+                statusDiv.textContent = `Error: ${err.message}`;
+                statusDiv.className = 'status error';
+                console.error('Capture error:', err);
+            }
+        });
+
+        function stopCapture() {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                preview.srcObject = null;
+                mediaStream = null;
+            }
+            
+            captureBtn.textContent = 'Capture Browser Tab';
+            captureBtn.onclick = captureTab;
+            statusDiv.textContent = 'Capture stopped';
+            statusDiv.className = 'status';
+        }
+    </script>
+</body>
+</html>
